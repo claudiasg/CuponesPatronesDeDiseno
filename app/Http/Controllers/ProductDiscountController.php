@@ -3,6 +3,11 @@
 namespace Cupones\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Cupones\Observer\ObsCuponUsado;
+use Cupones\Observer\ObsObserved;
+use Cupones\Observer\ObsObserver;
+use Cupones\Observer\ObsCuponVencido;
+use Cupones\Observer\ObsSubject;
 
 class ProductDiscountController extends Controller
 {
@@ -13,7 +18,17 @@ class ProductDiscountController extends Controller
      */
     public function index()
     {
-        //
+        $verificar = new ObsObserved();
+        $verificar->attach( new ObsCuponVencido() );
+        $verificar->attach( new ObsCuponUsado() );
+         
+        if ( $verificar->init( 5, 120, "producto 1" ) ) {
+            echo "Producto verificado";
+        } else {
+            echo "<pre>";
+            print_r( $verificar->getStatus() );
+            echo "</pre>";
+        }
     }
 
     /**
